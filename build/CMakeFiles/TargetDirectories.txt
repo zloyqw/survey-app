@@ -1,0 +1,3 @@
+/Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles/survey_app.dir
+/Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles/edit_cache.dir
+/Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles/rebuild_cache.dir
