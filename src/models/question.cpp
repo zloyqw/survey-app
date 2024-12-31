@@ -1,85 +1,91 @@
 #include "models/question.h"
-#include <vector>
+#include <iostream>
 #include <stdexcept>
+#include "database/db_connection.h"
+#include <pqxx/pqxx>
+#include <sstream>
 
-std::vector<Question> Question::questions;
-int Question::nextId = 1;
-
-Question::Question() : id(0), text(""), type("") {}
-
-Question::Question(int id, const std::string& text, const std::string& type)
-    : id(id), text(text), type(type) {}
+Question::Question(int id, int testId, const std::string& questionText) : id(id), testId(testId), questionText(questionText) {}
 
 int Question::getId() const {
     return id;
 }
 
-void Question::setId(int id) {
-    this->id = id;
+int Question::getTestId() const {
+    return testId;
 }
 
-std::string Question::getText() const {
-    return text;
+std::string Question::getQuestionText() const {
+    return questionText;
 }
 
-void Question::setText(const std::string& text) {
-    this->text = text;
+Question Question::create(int testId, const std::string& questionText) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+     pqxx::work txn(connection);
+    
+    pqxx::result res = txn.exec(
+        "INSERT INTO questions (test_id, question_text) VALUES (" + std::to_string(testId) + ", '" + questionText + "') RETURNING id"
+    );
+    
+    int newId = 0;
+    if (!res.empty())
+    {
+       newId = res[0][0].as<int>();
+    }
+    
+    txn.commit();
+    
+    return Question(newId, testId, questionText);
 }
 
-std::string Question::getType() const {
-    return type;
-}
+std::vector<Question> Question::getAll() {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+     pqxx::work txn(connection);
 
-void Question::setType(const std::string& type) {
-    this->type = type;
-}
-Question Question::create(const std::string& text, const std::string& type)
-{
-    Question question(nextId++, text, type);
-    questions.push_back(question);
-    return question;
-}
+    pqxx::result res = txn.exec("SELECT id, test_id, question_text FROM questions");
 
-std::vector<Question> Question::getAll()
-{
+    std::vector<Question> questions;
+    for (const auto& row : res) {
+        questions.emplace_back(row[0].as<int>(), row[1].as<int>(), row[2].as<std::string>());
+    }
+    txn.commit();
     return questions;
 }
 
-Question Question::get(int id)
-{
-    for (const auto& question : questions)
-    {
-        if (question.getId() == id)
-        {
-            return question;
-        }
+Question Question::get(int id) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+
+    pqxx::result res = txn.exec(
+        "SELECT id, test_id, question_text FROM questions WHERE id = " + std::to_string(id)
+    );
+
+    if (res.empty()) {
+        throw std::runtime_error("Question with id " + std::to_string(id) + " not found");
     }
-    throw std::runtime_error("Question not found");
+    txn.commit();
+    return Question(res[0][0].as<int>(), res[0][1].as<int>(), res[0][2].as<std::string>());
 }
 
-Question Question::update(int id, const std::string& text, const std::string& type)
-{
-     for(auto& question : questions)
-    {
-        if (question.getId() == id)
-        {
-             question.setText(text);
-            question.setType(type);
-            return question;
-        }
-    }
-    throw std::runtime_error("Question not found");
+Question Question::update(int id, int testId, const std::string& questionText) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+
+    txn.exec(
+        "UPDATE questions SET test_id = " + std::to_string(testId) + ", question_text = '" + questionText + "' WHERE id = " + std::to_string(id)
+    );
+     txn.commit();
+    return Question(id, testId, questionText);
 }
 
-void Question::remove(int id)
-{
-    for (size_t i = 0; i < questions.size(); ++i)
-    {
-        if (questions[i].getId() == id)
-        {
-            questions.erase(questions.begin() + i);
-            return;
-        }
-    }
-    throw std::runtime_error("Question not found");
+void Question::remove(int id) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+     pqxx::work txn(connection);
+    txn.exec("DELETE FROM questions WHERE id = " + std::to_string(id));
+     txn.commit();
 }

@@ -1,85 +1,90 @@
 #include "models/test.h"
-#include <vector>
+#include <iostream>
 #include <stdexcept>
+#include "database/db_connection.h"
+#include <pqxx/pqxx>
+#include <sstream>
 
-std::vector<Test> Test::tests;
-int Test::nextId = 1;
-
-Test::Test() : id(0), name(""), description("") {}
-
-Test::Test(int id, const std::string& name, const std::string& description)
-    : id(id), name(name), description(description) {}
+Test::Test(int id, const std::string& name, const std::string& description) : id(id), name(name), description(description) {}
 
 int Test::getId() const {
     return id;
-}
-
-void Test::setId(int id) {
-    this->id = id;
 }
 
 std::string Test::getName() const {
     return name;
 }
 
-void Test::setName(const std::string& name) {
-    this->name = name;
-}
-
 std::string Test::getDescription() const {
     return description;
 }
 
-void Test::setDescription(const std::string& description) {
-    this->description = description;
-}
-Test Test::create(const std::string& name, const std::string& description)
-{
-    Test test(nextId++, name, description);
-    tests.push_back(test);
-    return test;
+Test Test::create(const std::string& name, const std::string& description) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+    
+    pqxx::result res = txn.exec(
+        "INSERT INTO tests (name, description) VALUES ('" + name + "', '" + description + "') RETURNING id"
+    );
+    
+    int newId = 0;
+    if (!res.empty())
+    {
+       newId = res[0][0].as<int>();
+    }
+    
+    txn.commit();
+
+    return Test(newId, name, description);
 }
 
-std::vector<Test> Test::getAll()
-{
+std::vector<Test> Test::getAll() {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+
+    pqxx::result res = txn.exec("SELECT id, name, description FROM tests");
+
+    std::vector<Test> tests;
+    for (const auto& row : res) {
+        tests.emplace_back(row[0].as<int>(), row[1].as<std::string>(), row[2].as<std::string>());
+    }
+     txn.commit();
     return tests;
 }
 
-Test Test::get(int id)
-{
-    for (const auto& test : tests)
-    {
-        if (test.getId() == id)
-        {
-            return test;
-        }
+Test Test::get(int id) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+
+    pqxx::result res = txn.exec(
+        "SELECT id, name, description FROM tests WHERE id = " + std::to_string(id)
+    );
+
+    if (res.empty()) {
+        throw std::runtime_error("Test with id " + std::to_string(id) + " not found");
     }
-    throw std::runtime_error("Test not found");
+    txn.commit();
+    return Test(res[0][0].as<int>(), res[0][1].as<std::string>(), res[0][2].as<std::string>());
 }
 
-Test Test::update(int id, const std::string& name, const std::string& description)
-{
-    for (auto& test : tests)
-    {
-        if (test.getId() == id)
-        {
-            test.setName(name);
-            test.setDescription(description);
-            return test;
-        }
-    }
-    throw std::runtime_error("Test not found");
+Test Test::update(int id, const std::string& name, const std::string& description) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+     pqxx::work txn(connection);
+    txn.exec(
+       "UPDATE tests SET name = '" + name + "', description = '" + description + "' WHERE id = " + std::to_string(id)
+    );
+    txn.commit();
+    return Test(id, name, description);
 }
 
-void Test::remove(int id)
-{
-    for (size_t i = 0; i < tests.size(); ++i)
-    {
-        if (tests[i].getId() == id)
-        {
-            tests.erase(tests.begin() + i);
-            return;
-        }
-    }
-    throw std::runtime_error("Test not found");
+void Test::remove(int id) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+     pqxx::work txn(connection);
+    txn.exec("DELETE FROM tests WHERE id = " + std::to_string(id));
+    txn.commit();
 }

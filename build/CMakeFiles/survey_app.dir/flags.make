@@ -4,7 +4,7 @@
 # compile CXX with /Library/Developer/CommandLineTools/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/ivanmosenskij/Documents/main_project/survey-app/include
+CXX_INCLUDES = -I/Users/ivanmosenskij/Documents/main_project/survey-app/include -I/opt/homebrew/Cellar/libpqxx/7.10.0/include
 
 CXX_FLAGSarm64 = -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1
 

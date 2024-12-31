@@ -153,6 +153,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/survey_app.dir/build.make CMakeFiles/survey_app.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/database/db_connection.o: src/database/db_connection.cpp.o
+.PHONY : src/database/db_connection.o
+
+# target to build an object file
+src/database/db_connection.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/survey_app.dir/build.make CMakeFiles/survey_app.dir/src/database/db_connection.cpp.o
+.PHONY : src/database/db_connection.cpp.o
+
+src/database/db_connection.i: src/database/db_connection.cpp.i
+.PHONY : src/database/db_connection.i
+
+# target to preprocess a source file
+src/database/db_connection.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/survey_app.dir/build.make CMakeFiles/survey_app.dir/src/database/db_connection.cpp.i
+.PHONY : src/database/db_connection.cpp.i
+
+src/database/db_connection.s: src/database/db_connection.cpp.s
+.PHONY : src/database/db_connection.s
+
+# target to generate assembly for a file
+src/database/db_connection.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/survey_app.dir/build.make CMakeFiles/survey_app.dir/src/database/db_connection.cpp.s
+.PHONY : src/database/db_connection.cpp.s
+
 src/models/answer.o: src/models/answer.cpp.o
 .PHONY : src/models/answer.o
 
@@ -285,6 +309,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... src/database/db_connection.o"
+	@echo "... src/database/db_connection.i"
+	@echo "... src/database/db_connection.s"
 	@echo "... src/models/answer.o"
 	@echo "... src/models/answer.i"
 	@echo "... src/models/answer.s"

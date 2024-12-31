@@ -1,86 +1,96 @@
 #include "models/user.h"
-#include <vector>
+#include <iostream>
 #include <stdexcept>
+#include "database/db_connection.h"
+#include <pqxx/pqxx>
+#include <sstream>
 
-std::vector<User> User::users;
-int User::nextId = 1;
-
-User::User() : id(0), username(""), email("") {}
-
-User::User(int id, const std::string& username, const std::string& email)
-    : id(id), username(username), email(email) {}
+User::User(int id, const std::string& username, const std::string& email) : id(id), username(username), email(email) {}
 
 int User::getId() const {
     return id;
-}
-
-void User::setId(int id) {
-    this->id = id;
 }
 
 std::string User::getUsername() const {
     return username;
 }
 
-void User::setUsername(const std::string& username) {
-    this->username = username;
-}
-
 std::string User::getEmail() const {
     return email;
 }
 
-void User::setEmail(const std::string& email) {
-    this->email = email;
+User User::create(const std::string& username, const std::string& email) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+    
+    pqxx::result res = txn.exec(
+        "INSERT INTO users (username, email) VALUES ('" + username + "', '" + email + "') RETURNING id"
+    );
+    
+    int newId = 0;
+    if (!res.empty())
+    {
+       newId = res[0][0].as<int>();
+    }
+    
+    txn.commit();
+
+    return User(newId, username, email);
 }
 
-User User::create(const std::string& username, const std::string& email)
-{
-    User user(nextId++, username, email);
-    users.push_back(user);
-    return user;
-}
+std::vector<User> User::getAll() {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
 
-std::vector<User> User::getAll()
-{
+    pqxx::result res = txn.exec("SELECT id, username, email FROM users");
+
+    std::vector<User> users;
+    for (const auto& row : res) {
+        users.emplace_back(row[0].as<int>(), row[1].as<std::string>(), row[2].as<std::string>());
+    }
+    txn.commit();
     return users;
 }
 
-User User::get(int id)
-{
-    for (const auto& user : users)
-    {
-        if (user.getId() == id)
-        {
-            return user;
-        }
+User User::get(int id) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+
+   pqxx::result res = txn.exec(
+        "SELECT id, username, email FROM users WHERE id = " + std::to_string(id)
+    );
+
+    if (res.empty()) {
+        throw std::runtime_error("User with id " + std::to_string(id) + " not found");
     }
-    throw std::runtime_error("User not found");
+
+    txn.commit();
+
+    return User(res[0][0].as<int>(), res[0][1].as<std::string>(), res[0][2].as<std::string>());
 }
 
-User User::update(int id, const std::string& username, const std::string& email)
-{
-    for (auto& user : users)
-    {
-        if (user.getId() == id)
-        {
-            user.setUsername(username);
-            user.setEmail(email);
-            return user;
-        }
-    }
-    throw std::runtime_error("User not found");
+User User::update(int id, const std::string& username, const std::string& email) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+
+    txn.exec(
+       "UPDATE users SET username = '" + username + "', email = '" + email + "' WHERE id = " + std::to_string(id)
+    );
+
+    txn.commit();
+
+    return User(id, username, email);
 }
 
-void User::remove(int id)
-{
-    for (size_t i = 0; i < users.size(); ++i)
-    {
-        if (users[i].getId() == id)
-        {
-            users.erase(users.begin() + i);
-            return;
-        }
-    }
-    throw std::runtime_error("User not found");
+void User::remove(int id) {
+    DbConnection db;
+    pqxx::connection& connection = db.getConnection();
+    pqxx::work txn(connection);
+
+    txn.exec("DELETE FROM users WHERE id = " + std::to_string(id));
+    txn.commit();
 }

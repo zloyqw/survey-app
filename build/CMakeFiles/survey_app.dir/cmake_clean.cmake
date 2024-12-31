@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/survey_app.dir/main.cpp.o"
   "CMakeFiles/survey_app.dir/main.cpp.o.d"
+  "CMakeFiles/survey_app.dir/src/database/db_connection.cpp.o"
+  "CMakeFiles/survey_app.dir/src/database/db_connection.cpp.o.d"
   "CMakeFiles/survey_app.dir/src/models/answer.cpp.o"
   "CMakeFiles/survey_app.dir/src/models/answer.cpp.o.d"
   "CMakeFiles/survey_app.dir/src/models/question.cpp.o"

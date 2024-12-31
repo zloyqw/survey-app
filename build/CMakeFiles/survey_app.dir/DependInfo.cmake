@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/ivanmosenskij/Documents/main_project/survey-app/main.cpp" "CMakeFiles/survey_app.dir/main.cpp.o" "gcc" "CMakeFiles/survey_app.dir/main.cpp.o.d"
+  "/Users/ivanmosenskij/Documents/main_project/survey-app/src/database/db_connection.cpp" "CMakeFiles/survey_app.dir/src/database/db_connection.cpp.o" "gcc" "CMakeFiles/survey_app.dir/src/database/db_connection.cpp.o.d"
   "/Users/ivanmosenskij/Documents/main_project/survey-app/src/models/answer.cpp" "CMakeFiles/survey_app.dir/src/models/answer.cpp.o" "gcc" "CMakeFiles/survey_app.dir/src/models/answer.cpp.o.d"
   "/Users/ivanmosenskij/Documents/main_project/survey-app/src/models/question.cpp" "CMakeFiles/survey_app.dir/src/models/question.cpp.o" "gcc" "CMakeFiles/survey_app.dir/src/models/question.cpp.o.d"
   "/Users/ivanmosenskij/Documents/main_project/survey-app/src/models/result.cpp" "CMakeFiles/survey_app.dir/src/models/result.cpp.o" "gcc" "CMakeFiles/survey_app.dir/src/models/result.cpp.o.d"

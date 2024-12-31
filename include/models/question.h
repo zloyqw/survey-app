@@ -1,30 +1,26 @@
-        #pragma once
-        #include <string>
-        #include <vector>
+#ifndef QUESTION_H
+#define QUESTION_H
 
-        class Question {
-        public:
-           Question();
-            Question(int id, const std::string& text, const std::string& type);
-            int getId() const;
-            void setId(int id);
+#include <string>
+#include <vector>
+#include "database/db_connection.h"
 
-            std::string getText() const;
-            void setText(const std::string& text);
+class Question {
+private:
+    int id;
+    int testId;
+    std::string questionText;
+public:
+    Question() = default;
+    Question(int id, int testId, const std::string& questionText);
+    int getId() const;
+    int getTestId() const;
+    std::string getQuestionText() const;
+    static Question create(int testId, const std::string& questionText);
+    static std::vector<Question> getAll();
+    static Question get(int id);
+    static Question update(int id, int testId, const std::string& questionText);
+    static void remove(int id);
+};
 
-            std::string getType() const;
-            void setType(const std::string& type);
-
-             static Question create(const std::string& text, const std::string& type);
-            static std::vector<Question> getAll();
-            static Question get(int id);
-             static Question update(int id, const std::string& text, const std::string& type);
-            static void remove(int id);
-        private:
-            int id;
-            std::string text;
-            std::string type;
-            static std::vector<Question> questions;
-            static int nextId;
-        };
-        
+#endif

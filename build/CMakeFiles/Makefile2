@@ -85,12 +85,12 @@ clean: CMakeFiles/survey_app.dir/clean
 CMakeFiles/survey_app.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/survey_app.dir/build.make CMakeFiles/survey_app.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/survey_app.dir/build.make CMakeFiles/survey_app.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target survey_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target survey_app"
 .PHONY : CMakeFiles/survey_app.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/survey_app.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/survey_app.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles 0
 .PHONY : CMakeFiles/survey_app.dir/rule
@@ -102,7 +102,7 @@ survey_app: CMakeFiles/survey_app.dir/rule
 # codegen rule for target.
 CMakeFiles/survey_app.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/survey_app.dir/build.make CMakeFiles/survey_app.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Finished codegen for target survey_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/ivanmosenskij/Documents/main_project/survey-app/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Finished codegen for target survey_app"
 .PHONY : CMakeFiles/survey_app.dir/codegen
 
 # clean rule for target.
